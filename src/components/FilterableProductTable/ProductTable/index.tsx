@@ -2,11 +2,25 @@ import ProductCategoryRow from "./ProductCategoryRow";
 import ProductRow from "./ProductRow";
 import { Product } from "@/types/product.type";
 
-function ProductTable({ products }: { products: Product[] }) {
+function ProductTable({
+  products,
+  filterText,
+  inStockOnly,
+}: {
+  products: Product[];
+  filterText: string;
+  inStockOnly: boolean;
+}) {
   const rows: JSX.Element[] = [];
-  let lastCategory = "";
+  let lastCategory: string | null = null;
 
   products.forEach((product) => {
+    if (product.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1) {
+      return;
+    }
+    if (inStockOnly && !product.stocked) {
+      return;
+    }
     if (product.category !== lastCategory) {
       rows.push(
         <ProductCategoryRow
